@@ -1,0 +1,26 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+      - id: servicio-books
+        uri: lb://servicio-books
+        predicates:
+        - Path=/books/**
+        filters:
+        - StripPrefix=1
+      - id: servicio-sales
+        uri: lb://servicio-sales
+        predicates:        - Path=/sales/**
+        filters:        - StripPrefix=1
+      - id: servicio-likes
+        uri: lb://servicio-likes
+        predicates:
+        - Path=/likes/**
+        filters:
+        - StripPrefix=1
+      - id: servicio-transactions
+        uri: lb://servicio-transactions
+        predicates:
+        - Path=/transactions/**
+        filters:
+        - StripPrefix=1
