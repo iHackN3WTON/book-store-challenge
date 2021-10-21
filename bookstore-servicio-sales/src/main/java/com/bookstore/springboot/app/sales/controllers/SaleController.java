@@ -1,10 +1,12 @@
 package com.bookstore.springboot.app.sales.controllers;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +26,10 @@ import lombok.SneakyThrows;
 public class SaleController {
 	
 	private final Logger log = LoggerFactory.getLogger(SaleController.class);
+	
+	@SuppressWarnings("rawtypes")
+	@Autowired
+	private CircuitBreakerFactory cbFactory;
 	
 	@Autowired
 	private ISaleService saleService;
@@ -48,9 +54,14 @@ public class SaleController {
 	@PostMapping("/")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Sale crear(@RequestBody Sale sale) {
-		Sale resultado = saleService.save(sale);
+		Sale resultado = cbFactory.create("sales").run(() -> saleService.save(sale), e -> crearFail(sale, e));
 		log.info("Guardando info de venta " + resultado.getId());
 		return resultado;
+	}
+	
+	public Sale crearFail(Sale sale, Throwable e) {
+		log.error(e.getMessage());
+		return new Sale(0L, 0L, "Error de conexion", 0D, LocalDate.now());
 	}
 	
 	@SneakyThrows
