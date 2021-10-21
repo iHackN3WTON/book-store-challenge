@@ -30,7 +30,7 @@ public class TransactionServiceImpl implements ITransactionService {
 		Transaction transaction = new Transaction(bookId, new ArrayList<LocalDate>(), 0D, new ArrayList<String>() );
 		ArrayList<LocalDate> salesDates = new ArrayList<LocalDate>();
 		ArrayList<String> customers = new ArrayList<String>();
-		Double totalRevenue = 0D;
+		Double totalRevenue = 0D;		
 		for (int i = 0; i < sales.size(); i++)
 		{
 			Boolean fechaYaRegistrada = false;
